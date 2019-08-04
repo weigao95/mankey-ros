@@ -1,0 +1,4 @@
+The number of images is 37651
+The min keypoint depth value is  153.0
+The max keypoint depth value is  1026.0
+The average keypoint depth value is  581.7786867104016

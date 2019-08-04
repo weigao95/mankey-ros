@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="mankey_ros" name="mankey_server" type="mankey_keypoint_server.py" 
+  args="--net_path /home/wei/data/pdc/trained_models/keypoints/mugs/checkpoint_with_flat/checkpoint-135.pth">
+  </node>
+</launch>
