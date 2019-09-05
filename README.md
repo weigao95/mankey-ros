@@ -5,7 +5,7 @@ This repo is part of [kPAM](https://github.com/weigao95/kPAM) that provides ros 
 
 ### Install Instruction
 
-- Clone this repo into your `catkin workspace` by `git clone https://github.com/weigao95/mankey_ros`
+- Clone this repo into your `catkin workspace` by `git clone https://github.com/weigao95/mankey-ros mankey_ros` (Note the underscore)
 - Run `catkin_make` to build the message types
 - To run the code in `nodes/` and `scripts/`, you need to add `${project_path}` to `PYTHONPATH` [1]. You might run `export PYTHONPATH="${project_path}:${PYTHONPATH}"`
 
