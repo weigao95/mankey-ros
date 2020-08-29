@@ -1,16 +1,20 @@
 #! /usr/bin/env python
-from mankey_ros.srv import *
 
-import rospy
-import cv2
+import argparse
 import os
-from sensor_msgs.msg import Image, RegionOfInterest
+
+import cv2
+import rospy
+from sensor_msgs.msg import RegionOfInterest
 from cv_bridge import CvBridge, CvBridgeError
 
+from mankey_ros.srv import *
 
-def main():
+
+def main(visualize):
     rospy.wait_for_service('detect_keypoints')
-    detect_keypoint = rospy.ServiceProxy('detect_keypoints', MankeyKeypointDetection)
+    detect_keypoint = rospy.ServiceProxy(
+        'detect_keypoints', MankeyKeypointDetection)
 
     # Get the test data path
     project_path = os.path.join(os.path.dirname(__file__), os.path.pardir)
@@ -39,6 +43,33 @@ def main():
     response = detect_keypoint(request)
     print response
 
+    if visualize:
+        import open3d as o3d
+
+        vis_list = []
+
+        color = o3d.geometry.Image(cv_rgb)
+        depth = o3d.geometry.Image(cv_depth)
+        rgbd = o3d.geometry.RGBDImage.create_from_color_and_depth(color, depth)
+
+        pcd = o3d.geometry.PointCloud.create_from_rgbd_image(
+            rgbd, o3d.camera.PinholeCameraIntrinsic(
+                o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault))
+        vis_list.append(pcd)
+
+        for keypoint in response.keypoints_camera_frame:
+            keypoints_coords \
+                = o3d.geometry.TriangleMesh.create_coordinate_frame(
+                    size=0.1, origin=[keypoint.x, keypoint.y, keypoint.z])
+            vis_list.append(keypoints_coords)
+        o3d.visualization.draw_geometries(vis_list)
+
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--visualize', '-v', type=int,
+        default=0)
+    args = parser.parse_args()
+    visualize = args.visualize
+    main(visualize)
